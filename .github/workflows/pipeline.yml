@@ -1,0 +1,44 @@
+name: News pipeline
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+# Never run two pipelines at once; a late-running job just queues the next.
+concurrency:
+  group: pipeline
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out private repo
+        uses: actions/checkout@v4
+        with:
+          repository: nishim3/news-feed-analysis
+          token: ${{ secrets.PRIVATE_REPO_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: analyzer/requirements.txt
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install analyzer dependencies
+        run: pip install -r analyzer/requirements.txt
+
+      - name: Run pipeline and publish data
+        run: bash scripts/ci/run.sh
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENROUTER_MODEL: ${{ vars.OPENROUTER_MODEL }}
+          PIPELINE_LIMIT: ${{ vars.PIPELINE_LIMIT }}
+          NEWS_ANALYZER_SOURCES: ${{ vars.NEWS_ANALYZER_SOURCES }}
+          DATA_RETENTION_DAYS: ${{ vars.DATA_RETENTION_DAYS }}
