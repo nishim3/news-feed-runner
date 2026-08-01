@@ -14,7 +14,7 @@ Repository **secrets** (Settings → Secrets and variables → Actions):
 | Secret | Value |
 |--------|-------|
 | `PRIVATE_REPO_TOKEN` | Fine-grained PAT with **Contents: Read and write** on the private repo only |
-| `OPENROUTER_API_KEY` | OpenRouter API key used by the classifier |
+| `OPENROUTER_API_KEY` | Optional. OpenRouter key for the classifier; without it, runs crawl and dedup but skip classification |
 
 Optional repository **variables**:
 
