@@ -2,7 +2,8 @@ name: News pipeline
 
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    # Off the :00/:30 peaks; GitHub drops fewer runs at odd minutes.
+    - cron: "7,37 * * * *"
   workflow_dispatch:
 
 # Never run two pipelines at once; a late-running job just queues the next.
